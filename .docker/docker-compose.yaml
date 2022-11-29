@@ -1,0 +1,54 @@
+version: '3.9'
+services:
+  nix_junior_app:
+    container_name: container_nix_junior_app
+    environment:
+      - DB_NAME=db_nix_junior
+      - DB_HOST=nix_junior_mysql
+      - DB_USER=admin
+      - DB_PASSWORD=password
+      - REDIS_URL=nix_junior_redis
+    build:
+      context: ../
+      dockerfile: .docker/dockerfile
+    restart: unless-stopped
+    depends_on:
+      - nix_junior_mysql
+    networks:
+      - default
+  nix_junior_redis:
+    image: redis
+    container_name: redis_nix_junior
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    networks:
+      - default
+  nix_junior_mysql:
+    image: mysql:latest
+    container_name: container_db_nix_junior
+    environment:
+      - MYSQL_DATABASE=db_nix_junior
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=password
+      - DATABASE_HOST=localhost:8081
+    ports:
+      - '8081:3306'
+    volumes:
+      - nix_junior_mysql:/var/lib/mysql
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+  nix_junior_proxy:
+    build: ./../proxy
+    restart: unless-stopped
+    ports:
+      - '80:80'
+    depends_on:
+      - nix_junior_app
+volumes:
+  nix_junior_mysql:
+    driver: local
+
+networks:
+  default:
+    driver: bridge
