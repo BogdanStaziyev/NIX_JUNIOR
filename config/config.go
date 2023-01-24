@@ -30,7 +30,7 @@ func GetConfiguration() Configuration {
 
 	return Configuration{
 		DatabaseName:      "db_nix_junior",
-		DatabaseHost:      "nix_junior_mysql:3306",
+		DatabaseHost:      "localhost:8081",
 		DatabaseUser:      "admin",
 		DatabasePassword:  "password",
 		MigrateToVersion:  migrateToVersion,
@@ -38,6 +38,6 @@ func GetConfiguration() Configuration {
 		AccessSecret:      "access",
 		RefreshSecret:     "refresh",
 		RedisPort:         "6379",
-		RedisHost:         "nix_junior_redis",
+		RedisHost:         "localhost",
 	}
 }

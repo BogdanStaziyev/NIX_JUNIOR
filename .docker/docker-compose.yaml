@@ -11,6 +11,8 @@ services:
     build:
       context: ../
       dockerfile: .docker/dockerfile
+    ports:
+      - "8080:8080"
     restart: unless-stopped
     depends_on:
       - nix_junior_mysql
@@ -38,13 +40,13 @@ services:
     volumes:
       - nix_junior_mysql:/var/lib/mysql
     command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
-  nix_junior_proxy:
-    build: ./../proxy
-    restart: unless-stopped
-    ports:
-      - '80:80'
-    depends_on:
-      - nix_junior_app
+#  nix_junior_proxy:
+#    build: ./../proxy
+#    restart: unless-stopped
+#    ports:
+#      - '80:80'
+#    depends_on:
+#      - nix_junior_app
 volumes:
   nix_junior_mysql:
     driver: local

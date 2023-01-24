@@ -5,6 +5,7 @@ import (
 	"github.com/BogdanStaziyev/NIX_Junior/config"
 	"github.com/BogdanStaziyev/NIX_Junior/internal/app"
 	"github.com/BogdanStaziyev/NIX_Junior/internal/infra/database"
+	"github.com/BogdanStaziyev/NIX_Junior/internal/infra/http"
 	"github.com/BogdanStaziyev/NIX_Junior/internal/infra/http/handlers"
 	"github.com/BogdanStaziyev/NIX_Junior/middleware"
 	"github.com/go-redis/redis/v7"
@@ -23,17 +24,20 @@ type Container struct {
 type Services struct {
 	app.UserService
 	app.AuthService
+	app.EventService
+	app.ClientService
 }
 
 type Handlers struct {
 	handlers.RegisterHandler
+	handlers.WebsocketConn
 }
 
 type Middleware struct {
 	middleware.AuthMiddleware
 }
 
-func New(conf config.Configuration) Container {
+func New(conf config.Configuration, s http.Server) Container {
 	sess := getDbSess(conf)
 	newRedis := getRedis(conf)
 
@@ -45,13 +49,21 @@ func New(conf config.Configuration) Container {
 
 	authMiddleware := middleware.NewMiddleware(authService, newRedis)
 
+	eventService := app.NewEventService()
+
+	clientService := app.NewClientService(eventService)
+	clientHandler := handlers.NewWebsocketConn(&s, clientService)
+
 	return Container{
 		Services: Services{
 			userService,
 			authService,
+			eventService,
+			clientService,
 		},
 		Handlers: Handlers{
 			registerController,
+			clientHandler,
 		},
 		Middleware: Middleware{
 			authMiddleware,

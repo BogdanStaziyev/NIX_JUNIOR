@@ -5,6 +5,7 @@ import (
 	"github.com/BogdanStaziyev/NIX_Junior/config/container"
 	"github.com/BogdanStaziyev/NIX_Junior/internal/infra/database"
 	"github.com/BogdanStaziyev/NIX_Junior/internal/infra/http"
+	"github.com/BogdanStaziyev/NIX_Junior/internal/infra/http/router"
 	"log"
 )
 
@@ -26,12 +27,12 @@ func main() {
 		log.Fatalf("Unable to apply migrations: %q\n", err)
 	}
 
-	cont := container.New(conf)
-
 	// Echo Server
 	srv := http.NewServer()
 
-	http.EchoRouter(srv, cont)
+	cont := container.New(conf, *srv)
+
+	router.EchoRouter(srv, cont)
 
 	err = srv.Start()
 	if err != nil {
