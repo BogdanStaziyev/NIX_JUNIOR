@@ -4,9 +4,13 @@ services:
     container_name: container_nix_junior_app
     environment:
       - DB_NAME=db_nix_junior
-      - DB_HOST=nix_junior_mysql
+      - DB_HOST=nix_junior_mysql:3306
       - DB_USER=admin
       - DB_PASSWORD=password
+      - ACCESS_SECRET=access
+      - REFRESH_SECRET=refresh
+      - REDIS_PORT=6379
+      - REDIS_HOST=nix_junior_redis
       - REDIS_URL=nix_junior_redis
     build:
       context: ../

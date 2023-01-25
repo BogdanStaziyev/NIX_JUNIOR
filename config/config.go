@@ -1,7 +1,10 @@
 package config
 
 import (
+	"github.com/joho/godotenv"
+	"log"
 	"os"
+	"path/filepath"
 )
 
 type Configuration struct {
@@ -27,17 +30,21 @@ func GetConfiguration() Configuration {
 	if !set {
 		migrateToVersion = "latest"
 	}
+	err := godotenv.Load(filepath.Join(".env"))
+	if err != nil {
+		log.Println(err)
+	}
 
 	return Configuration{
-		DatabaseName:      "db_nix_junior",
-		DatabaseHost:      "localhost:8081",
-		DatabaseUser:      "admin",
-		DatabasePassword:  "password",
+		DatabaseName:      os.Getenv("DB_NAME"),
+		DatabaseHost:      os.Getenv("DB_HOST"),
+		DatabaseUser:      os.Getenv("DB_USER"),
+		DatabasePassword:  os.Getenv("DB_PASSWORD"),
 		MigrateToVersion:  migrateToVersion,
 		MigrationLocation: migrationLocation,
-		AccessSecret:      "access",
-		RefreshSecret:     "refresh",
-		RedisPort:         "6379",
-		RedisHost:         "localhost",
+		AccessSecret:      os.Getenv("ACCESS_SECRET"),
+		RefreshSecret:     os.Getenv("REFRESH_SECRET"),
+		RedisPort:         os.Getenv("REDIS_PORT"),
+		RedisHost:         os.Getenv("REDIS_HOST"),
 	}
 }

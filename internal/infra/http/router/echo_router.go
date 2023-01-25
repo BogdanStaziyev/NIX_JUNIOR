@@ -14,8 +14,9 @@ func EchoRouter(s *http.Server, cont container.Container) {
 	e.Use(MW.Logger())
 	e.Validator = validators.NewValidator()
 
-	e.POST("/register", cont.RegisterHandler.Register)
-	e.POST("/login", cont.RegisterHandler.Login)
+	u := e.Group("user")
+	u.POST("/register", cont.RegisterHandler.Register)
+	u.POST("/login", cont.RegisterHandler.Login)
 
 	v1 := e.Group("/api/v1")
 	v1.GET("", http.PingHandler)

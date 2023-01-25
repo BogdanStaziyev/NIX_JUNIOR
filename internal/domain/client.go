@@ -5,11 +5,12 @@ import (
 )
 
 type Client struct {
-	ID   int64
-	Name string
-	Conn *websocket.Conn
-	Hub  *Hub
-	Send chan []byte
+	ID       int64
+	ChatName string
+	Name     string
+	Conn     *websocket.Conn
+	Hub      *Hub
+	Send     chan []byte
 }
 
 func NewClient(conn *websocket.Conn, hub *Hub) *Client {
