@@ -42,14 +42,14 @@ func (c clientService) ProcessEvents(rawMessage []byte, client *domain.ChatUser)
 	}
 
 	switch baseMessage.Action {
-	case domain.ActionSandMessage:
+	case domain.ActionSandMessageToAllUsers:
 		var message domain.SendMessageToAll
 		err = json.Unmarshal(rawMessage, &message)
 		if err != nil {
 			log.Println(err)
 			return err
 		}
-		if err = c.e.SendMessageToAll(client, message); err != nil {
+		if err = c.e.SendMessageToAllUsers(client, message); err != nil {
 			return err
 		}
 	case domain.ActionSendPrivate:
@@ -60,6 +60,17 @@ func (c clientService) ProcessEvents(rawMessage []byte, client *domain.ChatUser)
 			return err
 		}
 		if err = c.e.SendMessageToOne(client, message); err != nil {
+			return err
+		}
+	case domain.ActionSandMessageToChat:
+		var message domain.SendMessageToChat
+		err = json.Unmarshal(rawMessage, &message)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+		if err = c.e.SendMessageInChat(client, message); err != nil {
+			log.Println(err)
 			return err
 		}
 	}

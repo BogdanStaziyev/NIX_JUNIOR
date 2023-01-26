@@ -1,11 +1,12 @@
 package domain
 
 const (
-	ActionRegister    string = "register"
-	ActionLeaveChat   string = "leave-chat"
-	ActionJoinChat    string = "join-chat"
-	ActionSandMessage string = "send-message"
-	ActionSendPrivate string = "send-private"
+	ActionRegister              string = "register"
+	ActionLeaveChat             string = "leave-chat"
+	ActionJoinChat              string = "join-chat"
+	ActionSandMessageToChat     string = "send-message-chat"
+	ActionSandMessageToAllUsers string = "send-message-all"
+	ActionSendPrivate           string = "send-private"
 )
 
 type Base struct {
@@ -27,13 +28,18 @@ type LeaveChat struct {
 	ChatID int64 `json:"chat_id"`
 }
 
+type SendMessageToChat struct {
+	Base           // ActionSandMessageToChat
+	Message string `json:"message"`
+}
+
 type SendMessageToAll struct {
-	Base           // actionSandMessage
+	Base           // ActionSandMessageToAllUsers
 	Message string `json:"message"`
 }
 
 type SendMessageToOne struct {
-	Base           // actionSendPrivate
+	Base           // ActionSendPrivate
 	UserID  int64  `json:"user_id"`
 	Message string `json:"message"`
 }
