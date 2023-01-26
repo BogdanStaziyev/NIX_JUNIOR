@@ -17,9 +17,9 @@ const (
 )
 
 type ClientService interface {
-	ProcessEvents(rawMessage []byte, client *domain.Client) error
-	ReadPump(client *domain.Client)
-	WritePump(client *domain.Client)
+	ProcessEvents(rawMessage []byte, client *domain.ChatUser) error
+	ReadPump(client *domain.ChatUser)
+	WritePump(client *domain.ChatUser)
 }
 
 type clientService struct {
@@ -30,7 +30,7 @@ func NewClientService(event EventService) ClientService {
 	return clientService{e: event}
 }
 
-func (c clientService) ProcessEvents(rawMessage []byte, client *domain.Client) error {
+func (c clientService) ProcessEvents(rawMessage []byte, client *domain.ChatUser) error {
 	var baseMessage domain.Base
 	err := json.Unmarshal(rawMessage, &baseMessage)
 	if err != nil {
@@ -72,7 +72,7 @@ func (c clientService) ProcessEvents(rawMessage []byte, client *domain.Client) e
 // The application runs ReadPump in a per-connection goroutine. The application
 // ensures that there is at most one reader on a connection by executing all
 // reads from this goroutine.
-func (c clientService) ReadPump(client *domain.Client) {
+func (c clientService) ReadPump(client *domain.ChatUser) {
 
 	defer func() {
 		client.Disconnect()
@@ -108,7 +108,7 @@ func (c clientService) ReadPump(client *domain.Client) {
 // A goroutine running WritePump is started for each connection. The
 // application ensures that there is at most one writer to a connection by
 // executing all writes from this goroutine.
-func (c clientService) WritePump(client *domain.Client) {
+func (c clientService) WritePump(client *domain.ChatUser) {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
 		ticker.Stop()

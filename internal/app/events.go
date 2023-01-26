@@ -7,8 +7,8 @@ import (
 )
 
 type EventService interface {
-	SendMessageToAll(c *domain.Client, message domain.SendMessageToAll) error
-	SendMessageToOne(c *domain.Client, message domain.SendMessageToOne) error
+	SendMessageToAll(c *domain.ChatUser, message domain.SendMessageToAll) error
+	SendMessageToOne(c *domain.ChatUser, message domain.SendMessageToOne) error
 }
 
 type eventService struct {
@@ -18,8 +18,8 @@ func NewEventService() EventService {
 	return eventService{}
 }
 
-func (e eventService) SendMessageToAll(c *domain.Client, message domain.SendMessageToAll) error {
-	byt, err := json.Marshal(message.Message)
+func (e eventService) SendMessageToAll(c *domain.ChatUser, message domain.SendMessageToAll) error {
+	byt, err := json.Marshal(c.Name + ": " + message.Message)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -28,16 +28,17 @@ func (e eventService) SendMessageToAll(c *domain.Client, message domain.SendMess
 	return nil
 }
 
-func (e eventService) SendMessageToOne(c *domain.Client, message domain.SendMessageToOne) error {
-	byt, err := json.Marshal(message.Message)
+func (e eventService) SendMessageToOne(c *domain.ChatUser, message domain.SendMessageToOne) error {
+	byt, err := json.Marshal(c.Name + ": " + message.Message)
 	if err != nil {
 		log.Println(err)
 		return err
 	}
 	//todo find in db after register
-	for ind := range c.Hub.Clients {
+	for ind := range c.Chat.Users {
 		if ind.ID == message.UserID {
 			ind.Send <- byt
+			c.Send <- byt
 			return nil
 		}
 	}

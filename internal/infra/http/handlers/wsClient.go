@@ -29,6 +29,7 @@ var upgrader = websocket.Upgrader{
 
 func (cli *WebsocketConn) Socket(c echo.Context) error {
 	token := c.Get("user").(*jwt.Token)
+	chatName := c.QueryParam("chat")
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	conn, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
 	if err != nil {
@@ -40,8 +41,9 @@ func (cli *WebsocketConn) Socket(c echo.Context) error {
 
 	client.ID = user.ID
 	client.Name = user.Name
+	client.ChatName = chatName
 
-	client.Hub.Register <- client
+	client.Hub.RegisterChat <- client
 
 	go cli.clientService.WritePump(client)
 	go cli.clientService.ReadPump(client)
