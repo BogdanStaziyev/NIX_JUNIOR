@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/BogdanStaziyev/NIX_Junior/config"
 	"github.com/BogdanStaziyev/NIX_Junior/internal/app"
+	"github.com/BogdanStaziyev/NIX_Junior/internal/domain"
 	"github.com/BogdanStaziyev/NIX_Junior/internal/infra/database"
-	"github.com/BogdanStaziyev/NIX_Junior/internal/infra/http"
 	"github.com/BogdanStaziyev/NIX_Junior/internal/infra/http/handlers"
 	"github.com/BogdanStaziyev/NIX_Junior/middleware"
 	"github.com/go-redis/redis/v7"
@@ -37,7 +37,7 @@ type Middleware struct {
 	middleware.AuthMiddleware
 }
 
-func New(conf config.Configuration, s http.Server) Container {
+func New(conf config.Configuration, s *domain.Hub) Container {
 	sess := getDbSess(conf)
 	newRedis := getRedis(conf)
 
@@ -52,7 +52,7 @@ func New(conf config.Configuration, s http.Server) Container {
 	eventService := app.NewEventService()
 
 	clientService := app.NewClientService(eventService)
-	clientHandler := handlers.NewWebsocketConn(&s, clientService)
+	clientHandler := handlers.NewWebsocketConn(s, clientService)
 
 	return Container{
 		Services: Services{

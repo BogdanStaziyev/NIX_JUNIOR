@@ -5,13 +5,12 @@ import (
 	"github.com/BogdanStaziyev/NIX_Junior/config/container"
 	"github.com/BogdanStaziyev/NIX_Junior/internal/infra/database"
 	"github.com/BogdanStaziyev/NIX_Junior/internal/infra/http"
-	"github.com/BogdanStaziyev/NIX_Junior/internal/infra/http/router"
 	"log"
 )
 
-// @title 		NIX TRAINEE PROGRAM Demo App
+// @title 		NIX JUNIOR PROGRAM Demo App
 // @version 	V1.echo
-// @description REST service for NIX TRAINEE PROGRAM
+// @description REST service for NIX JUNIOR PROGRAM
 
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
@@ -30,9 +29,9 @@ func main() {
 	// Echo Server
 	srv := http.NewServer()
 
-	cont := container.New(conf, *srv)
+	cont := container.New(conf, srv.Hub)
 
-	router.EchoRouter(srv, cont)
+	http.EchoRouter(srv.Echo, cont)
 
 	err = srv.Start()
 	if err != nil {

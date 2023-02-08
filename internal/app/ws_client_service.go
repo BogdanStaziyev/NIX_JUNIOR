@@ -94,7 +94,6 @@ func (c clientService) ReadPump(client *domain.ChatUser) {
 		return
 	}
 	client.Conn.SetPongHandler(func(string) error {
-		//log.Println("pong")
 		return client.Conn.SetReadDeadline(time.Now().Add(pongWait))
 	})
 	for {
@@ -155,7 +154,6 @@ func (c clientService) WritePump(client *domain.ChatUser) {
 				return
 			}
 		case <-ticker.C:
-			//log.Printf("ping")
 			err := client.Conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if err != nil {
 				return

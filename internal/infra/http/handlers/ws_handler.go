@@ -3,7 +3,6 @@ package handlers
 import (
 	"github.com/BogdanStaziyev/NIX_Junior/internal/app"
 	"github.com/BogdanStaziyev/NIX_Junior/internal/domain"
-	s "github.com/BogdanStaziyev/NIX_Junior/internal/infra/http"
 	"github.com/golang-jwt/jwt"
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
@@ -11,13 +10,13 @@ import (
 )
 
 type WebsocketConn struct {
-	server        *s.Server
+	hub           *domain.Hub
 	clientService app.ClientService
 }
 
-func NewWebsocketConn(s *s.Server, c app.ClientService) WebsocketConn {
+func NewWebsocketConn(s *domain.Hub, c app.ClientService) WebsocketConn {
 	return WebsocketConn{
-		server:        s,
+		hub:           s,
 		clientService: c,
 	}
 }
@@ -37,7 +36,7 @@ func (cli *WebsocketConn) Socket(c echo.Context) error {
 	}
 	user := token.Claims.(*app.JwtTokenClaim)
 
-	client := domain.NewClient(conn, cli.server.Hub)
+	client := domain.NewClient(conn, cli.hub)
 
 	client.ID = user.ID
 	client.Name = user.Name
